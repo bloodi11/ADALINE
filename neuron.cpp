@@ -68,13 +68,6 @@ int Neuron::tuneWeights(int _iterations, double _desire) {
 				weightData[j] = 0;
 			}
 			if (calculateError(_desire) < 0.001) {
-				int a = 1;
-				for (auto& w : weightData) {
-					std::cout << w << " ";
-					if (a % 10 == 0) std::cout << std::endl;
-					a++;
-
-				}
 				previousInputData = inputData;
 
 				return 0;
