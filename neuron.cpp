@@ -16,8 +16,7 @@ Neuron::Neuron(unsigned int _size, double _learningRate, std::string _activation
 
 
 void Neuron::tuneBias() {
-	bias = 0 - (((double)inputData.size() ) / (6.28 * learningRate + 0.01));
-	//bias = 0 - (inputData.size() * 6.28 * learningRate);
+	bias = 0 - (((double)inputData.size() ) / (10 * learningRate + 0.01));
 	learningRate = std::abs(learningRate);
 }
 
@@ -51,30 +50,29 @@ int Neuron::tuneWeights(int _iterations, double _desire) {
 	for (unsigned int i = 0; i <= weightData.size() - 1; i++) {
 		indexes.push_back(i);
 	}
-	std::random_shuffle(indexes.begin(), indexes.end());
-
 	std::vector<double> previousW;
-	for (auto& w : weightData) previousW.push_back(w);
+	previousW = weightData;
+
 	for (int i = 1; i <= _iterations; i++) {
+		std::random_shuffle(indexes.begin(), indexes.end());
 		for (auto& j : indexes) {
-			double momentum = weightData[j] - previousW[j];
-			previousW[j] = weightData[j];
+			//double momentum = weightData[j] - previousW[j];
+			//previousW[j] = weightData[j];
 			if (inputData[j] == previousInputData[j] || previousInputData[0] == -2) {
-				weightData[j] = weightData[j] + learningRate*(_desire - calculateOutput())*inputData[j] + 0.7*momentum;
+				weightData[j] += learningRate*(_desire - calculateOutput())*inputData[j];
 			}
 			if (inputData[j] != previousInputData[j] && previousInputData[0] != -2) {
-				//std::srand(time(nullptr));
-				//weightData[j] = ((double)i) / (std::rand());
 				weightData[j] = 0;
 			}
-			if (calculateError(_desire) < 0.001) {
+			if (calculateError(_desire) < 1e-9) {
 				previousInputData = inputData;
-
+				std::cout << "iterations: " << i << std::endl;
 				return 0;
 			}
 		}
 	}
 	previousInputData = inputData;
+	std::cout << "iterations: " << "all possible" << std::endl;
 
 	return 0;
 }
@@ -86,12 +84,9 @@ double Neuron::calculateOutput() {
 }
 
 double Neuron::calculateError(const double _desire) {
-	double error = 0;
-	double result;
-	for (auto&& in : inputData) {
-		error = std::pow(_desire - calculateOutput(), 2) + error;
-		result = error / 2;
-	}
+		double error = std::pow(_desire - calculateOutput(), 2);
+		double result = error / 2;
+
 	return result;
 }
 
@@ -153,6 +148,7 @@ double Neuron::sigmoidFunction(double x) {
 
 void Neuron::setInputSize(unsigned int _size) {
 	inputData.resize(_size);
+	previousInputData.resize(_size);
 	weightData.resize(_size);
 }
 
