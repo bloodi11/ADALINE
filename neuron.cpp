@@ -50,8 +50,8 @@ int Neuron::tuneWeights(int _iterations, double _desire) {
 	for (unsigned int i = 0; i <= weightData.size() - 1; i++) {
 		indexes.push_back(i);
 	}
-	std::vector<double> previousW;
-	previousW = weightData;
+	//std::vector<double> previousW;
+	//previousW = weightData;
 
 	for (int i = 1; i <= _iterations; i++) {
 		std::random_shuffle(indexes.begin(), indexes.end());
